@@ -2,8 +2,22 @@ var express = require("express");
 var router = express.Router();
 
 var jade = require("jade");
-
+//bluebird promise sendgrid send function help
+//https://github.com/sendgrid/sendgrid-nodejs/issues/206#issuecomment-190560135
+const Promise = require("bluebird");
 const sgMail = require("@sendgrid/mail");
+
+const sendEmail = params => {
+  return new Promise((resolve, reject) => {
+    sgMail.send(params, (err, json) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(json);
+      }
+    });
+  });
+};
 
 const apiKey = process.env.SENDGRID_API_KEY || "";
 sgMail.setApiKey(apiKey);
@@ -32,12 +46,27 @@ router.post("/", (req, res, next) => {
   let data = jade.renderFile(process.cwd() + "/views/design.jade", req.body);
   msg.html = data;
 
-  sgMail.send(msg, function(err, json) {
-    if (err) {
-      throw err;
-    }
-    res.json(json);
-  });
+  sendEmail(msg)
+    .then(json => {
+      //success
+      res.json(json);
+    })
+    .catch(err => {
+      //error
+      res.json({ code: err.code, message: err.message });
+      //console.log(err);
+    });
+  // sgMail
+  //   .send(msg, function(err, json) {
+  //     if (err) {
+  //       throw err;
+  //     }
+  //     res.json(json);
+  //   })
+  //   .catch(err => {
+  //     res.json({ code: err.code, message: err.message });
+  //     // console.log(err);
+  //   });
 });
 
 module.exports = router;
