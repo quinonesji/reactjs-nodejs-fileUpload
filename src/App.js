@@ -33,21 +33,21 @@ class App extends Component {
     var myForm = document.getElementById("myForm");
     const data = new FormData(myForm);
     //data.append("file", this.state.selectedFile, this.state.selectedFile.name);
-
-    axios
-      .post("/sendEmail", data, {
-        onUploadProgress: ProgressEvent => {
-          this.setState({
-            loaded: (ProgressEvent.loaded / ProgressEvent.total) * 100
-          });
-        }
-      })
-      .then(res => {
-        console.log(res.data);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    console.log(data)
+    // axios
+    //   .post("/sendEmail", data, {
+    //     onUploadProgress: ProgressEvent => {
+    //       this.setState({
+    //         loaded: (ProgressEvent.loaded / ProgressEvent.total) * 100
+    //       });
+    //     }
+    //   })
+    //   .then(res => {
+    //     console.log(res.data);
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //   });
   };
 
   render() {
